@@ -1,0 +1,49 @@
+export module cadjit:values;
+
+import dxx.cstd.fixed;
+import std;
+
+namespace cadjit {
+
+/// @brief Register value
+enum class reg_t {
+    rbp, rsp, rip,
+    // Floating point
+    xmm0, xmm1, xmm2,
+}; // <-- enum class reg_t
+
+/// @brief Immediate value
+struct imm_t {
+    u32 value;
+
+    [[nodiscard]]
+    constexpr auto operator<=>(const imm_t&) const = default;
+};
+
+/// @brief Value at a memory address
+struct mem_t {
+    std::optional<reg_t> segment;
+    std::optional<reg_t> base;
+    std::optional<reg_t> index;
+    int                  scale;
+    i64                  displacement;
+
+    uptr                 rip;
+
+    [[nodiscard]]
+    constexpr auto operator==(const mem_t& other) const {
+        return this->segment == other.segment
+            && this->base == other.base
+            && this->index == other.index
+            && this->scale == other.scale
+            && this->displacement == other.displacement;
+    }
+
+    [[nodiscard]]
+    constexpr auto operator<=>(const mem_t&) const = default;
+}; // <-- struct mem_t
+
+/// @brief A value in an operand will always be represented by either of these
+using value_t = std::variant<reg_t, imm_t, mem_t>;
+
+} // <-- namespace cadjit

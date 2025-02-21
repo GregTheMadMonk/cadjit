@@ -1,0 +1,21 @@
+export module cadjit:model;
+
+import :tree;
+import :values;
+
+import std;
+
+namespace cadjit {
+
+enum class operator_t {
+    add, multiply,
+}; // <-- enum class operator_t
+
+struct token_t {
+    std::variant<operator_t, value_t> token;
+    bool recent;
+}; // <-- struct token_t
+
+using model_t = tree_t<token_t>;
+
+} // <-- cadjit

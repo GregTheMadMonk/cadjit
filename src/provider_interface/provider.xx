@@ -1,0 +1,10 @@
+export module provider;
+
+import std;
+
+export std::string_view provider_name();
+
+export float func1(float x);
+export float func2(float x);
+export float func3(float x);
+export float func4(float x);

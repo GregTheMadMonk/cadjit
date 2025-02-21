@@ -1,0 +1,38 @@
+export module cadjit:pseudocode;
+
+import :values;
+
+import std;
+
+namespace cadjit::code {
+
+/// @brief Some instruction that does not affect calculations
+struct misc_t {};
+
+/// @brief Move the value from one location to another
+struct move_t {
+    value_t from, to;
+}; // <-- struct move_t
+
+/// @brief Multiply two values
+struct mult_t {
+    value_t dest, other;
+}; // <-- struct mult_t
+
+/// @brief Add two values
+struct add_t {
+    value_t dest, other;
+}; // <-- struct add_t
+
+struct instruction_t {
+    uz address;
+
+    std::variant<
+        move_t,
+        mult_t,
+        add_t,
+        misc_t
+    > instruction;
+}; // <-- struct instruction_t
+
+} // <-- namespace cadjit::code

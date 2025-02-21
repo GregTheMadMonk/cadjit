@@ -1,0 +1,16 @@
+export module cadjit;
+
+export import :model;
+export import :pseudocode;
+export import :values;
+export import :tree;
+
+import std;
+
+namespace cadjit {
+
+export std::vector<code::instruction_t> disassemble(const void* function);
+export model_t build_model(const std::vector<code::instruction_t>& algo);
+export float aad_model(const model_t& model, float x);
+
+} // <-- namespace cadjit
