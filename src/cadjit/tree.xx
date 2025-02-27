@@ -5,38 +5,45 @@ import std;
 
 namespace cadjit {
 
-template <typename NodeData>
-class tree_t {
+template <typename TNodeData>
+class Tree {
 public:
-    using node_data_t = NodeData;
+    using NodeData = TNodeData;
 
 private:
-    struct node_t {
-        std::shared_ptr<node_t> parent;
-        std::shared_ptr<node_t> left, right;
-        node_data_t             data;
-    }; // <-- struct node_t
+    struct Node {
+        std::shared_ptr<Node> parent;
+        std::shared_ptr<Node> left, right;
+        NodeData              data;
+    }; // <-- struct Node
 
 public:
-    struct iterator_t {
+    struct Iterator {
         using iterator_category = std::forward_iterator_tag;
         using difference_type   = std::ptrdiff_t;
-        using value_type        = node_t;
-        using pointer           = node_t*;
-        using reference         = node_t&;
+        using value_type        = Node;
+        using pointer           = Node*;
+        using reference         = Node&;
 
-        std::shared_ptr<node_t> ptr;
+        std::shared_ptr<Node> ptr;
+        uz                    depth;
 
-        iterator_t() : ptr(nullptr) {}
-        iterator_t(std::shared_ptr<node_t> p) : ptr(p) {}
-        iterator_t(const iterator_t& other) : ptr(other.ptr) {}
-        iterator_t& operator=(const iterator_t& other) { this->ptr = other.ptr; return *this; }
+        Iterator() : ptr(nullptr), depth(std::numeric_limits<uz>::max()) {}
+        Iterator(std::shared_ptr<Node> p, uz d) : ptr(p), depth(d) {}
+        Iterator(const Iterator& other) : ptr(other.ptr), depth(other.depth) {}
+        Iterator& operator=(const Iterator& other) {
+            this->ptr = other.ptr;
+            this->depth = other.depth;
+            return *this;
+        } // <-- Iterator& operator=(other)
 
         auto& operator++() {
             if (this->ptr->left != nullptr) {
                 this->ptr = this->ptr->left;
+                ++this->depth;
             } else if (this->ptr->right != nullptr) {
                 this->ptr = this->ptr->right;
+                ++this->depth;
             } else {
                 while (this->ptr != nullptr) {
                     if (this->ptr->parent != nullptr && this->ptr == this->ptr->parent->left) {
@@ -46,9 +53,11 @@ public:
                             break;
                         } else {
                             this->ptr = this->ptr->parent;
+                            --this->depth;
                         }
                     } else {
                         this->ptr = this->ptr->parent;
+                        --this->depth;
                     }
                 }
             }
@@ -64,14 +73,14 @@ public:
         auto& operator*(this auto& self) { return *self.ptr; }
 
         [[nodiscard]] 
-        inline bool operator<=>(const iterator_t&) const = default;
-    }; // <-- struct iterator_t
+        inline bool operator<=>(const Iterator&) const = default;
+    }; // <-- struct Iterator
 
 public:
-    tree_t(const node_data_t& root_data)
+    Tree(const NodeData& root_data)
         : root{
-            std::make_shared<node_t>(
-                node_t{
+            std::make_shared<Node>(
+                Node{
                     .parent = nullptr,
                     .left   = nullptr,
                     .right  = nullptr,
@@ -84,9 +93,9 @@ public:
     [[nodiscard]]
     inline auto& get_root(this auto& self) { return self.root; }
 
-    inline auto push_node(std::shared_ptr<node_t> parent, const node_data_t& data, bool left) {
-        (left ? parent->left : parent->right) = std::make_shared<node_t>(
-            node_t{
+    inline auto push_node(std::shared_ptr<Node> parent, const NodeData& data, bool left) {
+        (left ? parent->left : parent->right) = std::make_shared<Node>(
+            Node{
                 .parent = parent,
                 .left   = nullptr,
                 .right  = nullptr,
@@ -98,19 +107,19 @@ public:
     }
 
     [[nodiscard]]
-    inline auto begin() { return iterator_t{ this->root }; }
+    inline auto begin() { return Iterator{ this->root, 0 }; }
 
     [[nodiscard]]
-    inline auto begin() const { return iterator_t{ this->root }; }
+    inline auto begin() const { return Iterator{ this->root, 0 }; }
 
     [[nodiscard]]
-    inline auto end()   { return iterator_t{ nullptr }; }
+    inline auto end()   { return Iterator{}; }
 
     [[nodiscard]]
-    inline auto end() const   { return iterator_t{ nullptr }; }
+    inline auto end() const   { return Iterator{}; }
 
 private:
-    std::shared_ptr<node_t> root;
-}; // <-- class tree_t
+    std::shared_ptr<Node> root;
+}; // <-- class Tree
 
 } // <-- namespace cadjit

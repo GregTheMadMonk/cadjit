@@ -62,6 +62,15 @@ add_library( provider2 SHARED src/provider2/provider.cc )
 target_compile_features( provider2 PRIVATE cxx_std_26 )
 target_link_libraries( provider2 PUBLIC provider_interface )
 
-add_executable( selftest test/main.cc )
+file( GLOB_RECURSE SELFTEST_CC "test/*.cc" )
+file( GLOB_RECURSE SELFTEST_XX "test/*.xx" )
+set_source_files_properties( ${SELFTEST_XX} PROPERTIES LANGUAGE CXX )
+add_executable( selftest ${SELFTEST_CC} )
+target_sources(
+    selftest PRIVATE
+    FILE_SET selftest_mod
+    TYPE CXX_MODULES
+    FILES ${SELFTEST_XX}
+)
 target_compile_features( selftest PRIVATE cxx_std_26 )
 target_link_libraries( selftest PRIVATE cadjit dot-xx::all provider1 )

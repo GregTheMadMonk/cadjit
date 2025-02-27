@@ -7,32 +7,37 @@ import std;
 namespace cadjit::code {
 
 /// @brief Some instruction that does not affect calculations
-struct misc_t {};
+struct Misc {};
 
 /// @brief Move the value from one location to another
-struct move_t {
+struct Move {
     value_t from, to;
-}; // <-- struct move_t
+}; // <-- struct Move
 
 /// @brief Multiply two values
-struct mult_t {
+struct Mult {
     value_t dest, other;
-}; // <-- struct mult_t
+}; // <-- struct Mult
 
 /// @brief Add two values
-struct add_t {
+struct Add {
     value_t dest, other;
-}; // <-- struct add_t
+}; // <-- struct Add
 
-struct instruction_t {
+struct Call {
+    value_t target;
+}; // <-- struct Call
+
+struct Instruction {
     uz address;
 
     std::variant<
-        move_t,
-        mult_t,
-        add_t,
-        misc_t
+        Move,
+        Mult,
+        Add,
+        Call,
+        Misc
     > instruction;
-}; // <-- struct instruction_t
+}; // <-- struct Instruction
 
 } // <-- namespace cadjit::code

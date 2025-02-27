@@ -8,7 +8,7 @@ import std;
 namespace cadjit {
 
 enum class operator_t {
-    add, multiply,
+    add, multiply, exp, sin, cos,
 }; // <-- enum class operator_t
 
 struct token_t {
@@ -16,6 +16,6 @@ struct token_t {
     bool recent;
 }; // <-- struct token_t
 
-using model_t = tree_t<token_t>;
+using model_t = Tree<token_t>;
 
 } // <-- cadjit

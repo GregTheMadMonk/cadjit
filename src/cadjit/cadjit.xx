@@ -1,16 +1,43 @@
 export module cadjit;
 
+export import :concepts;
 export import :model;
+export import :options;
 export import :pseudocode;
-export import :values;
 export import :tree;
+export import :values;
 
 import std;
 
 namespace cadjit {
 
-export std::vector<code::instruction_t> disassemble(const void* function);
-export model_t build_model(const std::vector<code::instruction_t>& algo);
-export float aad_model(const model_t& model, float x);
+std::vector<code::Instruction> disassemble(const void* function);
+model_t build_model(const std::vector<code::Instruction>& algo);
+float aad_model(const model_t& model, float x);
+
+export
+template <differentiable_function TFunction>
+class Derivative {
+public:
+    using Function = TFunction;
+
+public:
+    inline Derivative(Function c_func) : func(c_func) {}
+
+    template <typename... Args>
+    [[nodiscard]]
+    auto operator()(Args&&... args) const {
+        static_assert(sizeof...(Args) == 1);
+        // static_assert(std::same_as<Args[0], float>);
+        const auto code   = reinterpret_cast<const void*>(this->func);
+        const auto result = cadjit::disassemble(code);
+        const auto model  = cadjit::build_model(result);
+
+        return cadjit::aad_model(model, args...);
+    } // <-- auto operator()(Args&&... args) const
+
+private:
+    Function func;
+}; // <-- class Derivative
 
 } // <-- namespace cadjit

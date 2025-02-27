@@ -1,3 +1,12 @@
+import std;
+import dxx.selftest;
+
+int main(int argc, char** argv) {
+    std::unordered_set<std::string> filters;
+    for (int i = 1; i < argc; ++i) filters.insert(argv[i]);
+    return dxx::selftest::run_all(filters);
+} // <-- int main(argc, argv)
+#if 0
 import cadjit;
 import dxx.assert;
 import dxx.cstd.compat;
@@ -33,3 +42,4 @@ int main(int argc, char** argv) {
 
     return EXIT_SUCCESS;
 }
+#endif

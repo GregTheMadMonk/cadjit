@@ -1,0 +1,18 @@
+export module cadjit:concepts;
+
+namespace cadjit {
+
+template <typename> struct DifferentiableFunctionHelper {
+    static constexpr bool value = false;
+}; // <-- struct DifferentiableFunctionHelper<T>
+
+template <typename Retval, typename... Args>
+struct DifferentiableFunctionHelper<Retval (*)(Args...)> {
+    static constexpr bool value = true;
+}; // <-- struct DifferentiableFunctionHelper<Retval (*)(Args...)>
+
+export
+template <typename T>
+concept differentiable_function = DifferentiableFunctionHelper<T>::value;
+
+} // <-- namespace cadjit

@@ -1,0 +1,26 @@
+export module cadjit:options;
+
+import std;
+
+namespace cadjit {
+
+inline bool parse_env_bool(const std::string& name) {
+    using namespace std::literals;
+    const auto* const env = std::getenv(name.c_str());
+    return env != nullptr
+        && "0"sv != env
+        && "false"sv != env
+        && "FALSE"sv != env
+        && "OFF"sv != env
+        && "NO"sv != env
+        && "🚫"sv != env
+        ;
+}
+
+struct {
+    bool debug;
+} options {
+    .debug = parse_env_bool("CADJIT_DEBUG"),
+}; // <-- struct {} options
+
+} // <-- namespace cadjit

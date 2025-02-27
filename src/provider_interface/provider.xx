@@ -8,3 +8,8 @@ export float func1(float x);
 export float func2(float x);
 export float func3(float x);
 export float func4(float x);
+
+export float dfunc1(float x);
+export float dfunc2(float x);
+export float dfunc3(float x);
+export float dfunc4(float x);

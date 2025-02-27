@@ -1,0 +1,34 @@
+export module test_utils;
+
+export import cadjit;
+export import dxx.cstd.compat;
+export import dxx.cstd.fixed;
+export import dxx.selftest;
+export import std;
+
+export {
+using dxx::selftest::unit_test;
+using dxx::selftest::test;
+
+namespace cj = cadjit;
+
+template <typename T>
+requires std::is_floating_point_v<T>
+inline bool is_close(T l, std::convertible_to<T> auto r) {
+    // FIXME: Is this an acceptable accuracy?
+    constexpr auto e = 200 * std::numeric_limits<T>::epsilon();
+    const auto ret = std::abs(l - r) <= e * std::max(std::abs(l), std::abs(r));
+    if (!ret) {
+        std::println(stderr, "diff={}, tol={}", std::abs(l - r), e * std::max(std::abs(l), std::abs(r)));
+        std::println(stderr, "{} and {} are not close", l, r);
+    }
+    return ret;
+}
+
+inline const auto X = [] {
+    std::vector<f32> ret;
+    for (f32 x = -10.0f; x <= 10.0f; x += 0.1f) ret.push_back(x);
+    return ret;
+} (); // <-- X
+
+} // <-- export
